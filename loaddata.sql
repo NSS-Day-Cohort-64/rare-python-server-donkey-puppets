@@ -10,7 +10,7 @@ CREATE TABLE "Users" (
   "created_on" date,
   "active" bit
 );
-DROP TABLE USERS
+
 INSERT INTO "Users" ("first_name", "last_name", "email", "bio", "username", "password", "profile_image_url", "created_on", "active")
 VALUES
   ('Logan', 'Belew', 'Logan.doe@example.com', 'Hello, I am Logan.', 'LoganBelew1', '1', 'https://example.com/johndoe.jpg', '2023-07-31', True),
