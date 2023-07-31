@@ -30,6 +30,7 @@ CREATE TABLE "Subscriptions" (
   FOREIGN KEY(`author_id`) REFERENCES `Users`(`id`)
 );
 
+
 CREATE TABLE "Posts" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "user_id" INTEGER,
@@ -40,6 +41,7 @@ CREATE TABLE "Posts" (
   "content" varchar,
   "approved" bit,
   FOREIGN KEY(`user_id`) REFERENCES `Users`(`id`),
+  FOREIGN KEY(`category_id`) REFERENCES `Categories`(`id`)
 );
 
 CREATE TABLE "Comments" (
@@ -50,7 +52,6 @@ CREATE TABLE "Comments" (
   FOREIGN KEY(`post_id`) REFERENCES `Posts`(`id`),
   FOREIGN KEY(`author_id`) REFERENCES `Users`(`id`)
 );
-
 CREATE TABLE "Reactions" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "label" varchar,
@@ -72,6 +73,8 @@ CREATE TABLE "Tags" (
   "label" varchar
 );
 
+
+
 CREATE TABLE "PostTags" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "post_id" INTEGER,
@@ -79,12 +82,16 @@ CREATE TABLE "PostTags" (
   FOREIGN KEY(`post_id`) REFERENCES `Posts`(`id`),
   FOREIGN KEY(`tag_id`) REFERENCES `Tags`(`id`)
 );
+UPDATE PostReactions
+SET post_id = 1
+WHERE id = 1
+
 
 CREATE TABLE "Categories" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "label" varchar
 );
 
-INSERT INTO Categories ('label') VALUES ('News');
-INSERT INTO Tags ('label') VALUES ('JavaScript');
-INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
+
+
+
