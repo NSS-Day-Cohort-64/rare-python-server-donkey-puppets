@@ -11,6 +11,13 @@ CREATE TABLE "Users" (
   "active" bit
 );
 
+INSERT INTO "Users" ("first_name", "last_name", "email", "bio", "username", "password", "profile_image_url", "created_on", "active")
+VALUES
+  ('Logan', 'Belew', 'Logan.doe@example.com', 'Hello, I am Logan.', 'LoganBelew1', '1', 'https://example.com/johndoe.jpg', '2023-07-31', True),
+  ('Logan', 'Welch', 'Logan.Welch@example.com', 'Hi, I am Logan.', 'LoganWelch1', '1', 'https://example.com/janesmith.jpg', '2023-07-31', True),
+  ('Katie', 'Zarbock', 'Katie.Zarbock@example.com', 'Hey, I am Mike.', 'KatieZarbock1', '1', 'https://example.com/mikejohnson.jpg', '2023-07-31', True),
+  ('Randy', 'Hamm', 'Randy.Hamm@example.com', 'Greetings, I am Emily.', 'RandyHamm1', '1', 'https://example.com/emilybrown.jpg', '2023-07-31', True),
+  ('Austin', 'Warrick', 'Austin.Warrick@example.com', 'Nice to meet you, I am Alex.', 'AustinWarrick1', '1', 'https://example.com/alexlee.jpg', '2023-07-31', True);
 
 CREATE TABLE "DemotionQueue" (
   "action" varchar,
