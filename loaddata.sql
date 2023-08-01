@@ -128,3 +128,6 @@ INSERT INTO PostReactions ("id", "user_id", "reaction_id", "post_id")
 VALUES (NULL, 1, 2, 1);
 INSERT INTO "PostTags" ("id", "post_id", "tag_id")
 VALUES (NULL, 1, 1);
+INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Philosophy');
+INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Conspiracy');
+INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Jimmy Carter Fan Fic');
