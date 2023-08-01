@@ -26,6 +26,8 @@ class HandleRequests(BaseHTTPRequestHandler):
                 pass
             return (resource, id)
     
+
+
     def do_GET(self):
         response = {}
         parsed = self.parse_url()
@@ -38,7 +40,16 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_categories()
                 self._set_headers(200)
+        if resource == "tags":
+            if id is not None:
+                response = get_single_tag(id)
+                self._set_headers(200)
+            else:
+                response = get_all_tags()
+                self._set_headers(200)
         self.wfile.write(json.dumps(response).encode())
+
+
 
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
