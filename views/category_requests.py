@@ -11,7 +11,7 @@ CATEGORY = [
 
 def get_all_categories():
     """function to get all categories"""
-    with sqlite3.connect("./data.sqlite3") as conn:
+    with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
@@ -34,7 +34,7 @@ def get_all_categories():
 
 def get_single_category(id):
     """function to get single location"""
-    with sqlite3.connect("./data.sqlite3") as conn:
+    with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
@@ -60,12 +60,12 @@ def get_single_category(id):
             return category.__dict__
 
 def create_category(new_category):
-    """function to create new owner"""
-    with sqlite3.connect("./data.sqlite3") as conn:
+    """function to create new category"""
+    with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
-        INSERT INTO Categories
+        INSERT INTO categories
             ( label )
         VALUES
             ( ? );
@@ -86,7 +86,7 @@ def create_category(new_category):
 
 def delete_category(id):
     """function to delete snake"""
-    with sqlite3.connect("./data.sqlite3") as conn:
+    with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
@@ -96,7 +96,7 @@ def delete_category(id):
 
 def update_category(id, new_category):
     """function to update animal"""
-    with sqlite3.connect("./data.sqlite3") as conn:
+    with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
