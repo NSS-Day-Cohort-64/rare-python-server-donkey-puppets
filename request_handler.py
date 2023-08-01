@@ -1,8 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from urllib.parse import urlparse, parse_qs
 from views.user import create_user, login_user
 from views import create_post
+from views.category_requests import get_all_categories, get_single_category
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -26,6 +26,20 @@ class HandleRequests(BaseHTTPRequestHandler):
             except (IndexError, ValueError):
                 pass
             return (resource, id)
+    
+    def do_GET(self):
+        response = {}
+        parsed = self.parse_url()
+
+        (resource, id) = parsed
+        if resource == "categories":
+            if id is not None:
+                response = get_single_category(id)
+                self._set_headers(200)
+            else:
+                response = get_all_categories()
+                self._set_headers(200)
+        self.wfile.write(json.dumps(response).encode())
 
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
@@ -45,15 +59,10 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods',
-                         'GET, POST, PUT, DELETE')
+                        'GET, POST, PUT, DELETE')
         self.send_header('Access-Control-Allow-Headers',
-                         'X-Requested-With, Content-Type, Accept')
+                        'X-Requested-With, Content-Type, Accept')
         self.end_headers()
-
-    def do_GET(self):
-        """Handle Get requests to the server"""
-        pass
-
 
     def do_POST(self):
         """Make a post request to the server"""
