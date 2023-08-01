@@ -1,7 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+from views import get_all_tags, get_single_tag
 from views.user import create_user, login_user
 from views.category_requests import get_all_categories, get_single_category, create_category
+from views.tag_requests import get_single_tag, get_all_tags
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -25,6 +27,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             except (IndexError, ValueError):
                 pass
             return (resource, id)
+
     
 
 
@@ -48,8 +51,6 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = get_all_tags()
                 self._set_headers(200)
         self.wfile.write(json.dumps(response).encode())
-
-
 
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin

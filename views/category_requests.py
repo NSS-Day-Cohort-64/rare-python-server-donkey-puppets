@@ -2,12 +2,6 @@ import sqlite3
 import json
 from models import Category
 
-CATEGORY = [
-    {
-        "id": 1,
-        "label": "News"
-    }
-]
 
 def get_all_categories():
     """function to get all categories"""
