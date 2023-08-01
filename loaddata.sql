@@ -47,14 +47,14 @@ CREATE TABLE "Posts" (
   "category_id" INTEGER,
   "title" varchar,
   "publication_date" date,
-  "image_url" varchar,
   "content" varchar,
   "approved" bit,
   FOREIGN KEY(`user_id`) REFERENCES `Users`(`id`),
   FOREIGN KEY(`category_id`) REFERENCES `Categories`(`id`)
 );
-INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date", "image_url", "content", "approved")
-VALUES (1, 1, 1, 'Sample Post', '2023-07-31', 'https://example.com/sample_post.jpg', 'This is a sample post content.', 1);
+
+INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date", "content", "approved")
+VALUES (1, 1, 1, 'Sample Post', '2023-07-31', 'This is a sample post content.', 1);
 
 CREATE TABLE "Comments" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -112,6 +112,7 @@ CREATE TABLE "Categories" (
 );
 
 
-INSERT INTO Categories ('label') VALUES ('News');
+INSERT INTO Categories ('label') VALUES ('News'), ('Technology'), ('Science'), ('Entertainment'), ('Travel');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
 INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
+
