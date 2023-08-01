@@ -2,9 +2,10 @@ import sqlite3
 import json
 from models import Tag
 
-def get_all_tags():
-    with sqlite3.connect("./db.sqlite3") as conn:
 
+def get_all_tags():
+    """function to get all tags"""
+    with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
@@ -16,25 +17,21 @@ def get_all_tags():
         FROM tags t
         """)
 
-        # Initialize an empty list to hold all animal representations
-        tags = []
-
         # Convert rows of data into a Python list
         dataset = db_cursor.fetchall()
 
         # Iterate list of data returned from database
-        for row in dataset:
+        
+        tags = [Tag(row['id'], row['label']) for row in dataset]
 
-            # Create an animal instance from the current row
-            tag = Tag(row['id'], row['label'])
+        tags.sort(key=lambda x: x.label)
 
-            # Add the dictionary representation of the animal to the list
-            tags.append(tag.__dict__)
-
-    return tags
+        # Add the dictionary representation of the animal to the list
+    return [tag.__dict__ for tag in tags]
 
 
 def get_single_tag(id):
+    """function to get single tag"""
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
@@ -49,14 +46,17 @@ def get_single_tag(id):
         WHERE t.id = ?
         """, (id, ))
 
-        # animals = []
 
         # Load the single result into memory
         data = db_cursor.fetchone()
-        if data:
+        if data is None:
+            return {
+                "error": "Tag not found",
+                "status": 404
+            }
+        else:
+
             # Create an animal instance from the current row
             tag = Tag(data['id'], data['label'])
 
             return tag.__dict__
-        else:
-            return None

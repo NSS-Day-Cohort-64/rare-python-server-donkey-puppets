@@ -131,3 +131,4 @@ VALUES (NULL, 1, 1);
 INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Philosophy');
 INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Conspiracy');
 INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Jimmy Carter Fan Fic');
+INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Recipes');
