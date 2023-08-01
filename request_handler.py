@@ -8,7 +8,7 @@ from views.category_requests import get_all_categories, get_single_category
 class HandleRequests(BaseHTTPRequestHandler):
     """Handles the requests to this server"""
 
-    def parse_url(self, path):
+    def parse_url(self):
         """Parse the url into the resource and id"""
         path_params = self.path.split('/')
         resource = path_params[1]
@@ -26,51 +26,52 @@ class HandleRequests(BaseHTTPRequestHandler):
             except (IndexError, ValueError):
                 pass
             return (resource, id)
-    
+
     def do_GET(self):
-        self._set_headers(200)
-
         response = {}
+        parsed = self.parse_url()
 
-        # Parse URL and store entire tuple in a variable
-        parsed = self.parse_url(self.path)
-
-        # If the path does not include a query parameter, continue with the original if block
-        if '?' not in self.path:
-            (resource, id) = parsed
-
-            if resource == "tags":
-                if id is not None:
-                    response = get_single_tag(id)
-                else:
-                    response = get_all_tags()
-            if resource == "categories":
-                if id is not None:
-                    response = get_single_category(id)
-                else:
-                    response = get_all_tags()
-
+        (resource, id) = parsed
+        if resource == "categories":
+            if id is not None:
+                response = get_single_category(id)
+                self._set_headers(200)
+            else:
+                response = get_all_categories()
+                self._set_headers(200)
+        if resource == "tags":
+            if id is not None:
+                response = get_single_tag(id)
+                self._set_headers(200)
+            else:
+                response = get_all_tags()
+                self._set_headers(200)
         self.wfile.write(json.dumps(response).encode())
     # def do_GET(self):
-    #     response = {}
-    #     parsed = self.parse_url()
+    #     self._set_headers(200)
 
-    #     (resource, id) = parsed
-    #     if resource == "categories":
-    #         if id is not None:
-    #             response = get_single_category(id)
-    #             self._set_headers(200)
-    #         else:
-    #             response = get_all_categories()
-    #             self._set_headers(200)
-    #     elif resource == "tags":
-    #         if id is not None:
-    #             response = get_single_tag(id)
-    #             self._set_headers(200)
-    #         else:
-    #             response = get_all_tags()
-    #             self._set_headers(200)
+    #     response = {}
+
+    #     # Parse URL and store entire tuple in a variable
+    #     parsed = self.parse_url(self.path)
+
+    #     # If the path does not include a query parameter, continue with the original if block
+    #     if '?' not in self.path:
+    #         (resource, id) = parsed
+
+    #         if resource == "tags":
+    #             if id is not None:
+    #                 response = get_single_tag(id)
+    #             else:
+    #                 response = get_all_tags()
+    #         if resource == "categories":
+    #             if id is not None:
+    #                 response = get_single_category(id)
+    #             else:
+    #                 response = get_all_categories()
+
     #     self.wfile.write(json.dumps(response).encode())
+
 
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
