@@ -54,7 +54,7 @@ CREATE TABLE "Posts" (
   FOREIGN KEY(`category_id`) REFERENCES `Categories`(`id`)
 );
 INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date", "image_url", "content", "approved")
-VALUES (1, 1, 1, 'Sample Post', '2023-07-31', 'https://example.com/sample_post.jpg', 'This is a sample post content.', 1);
+VALUES (NUll, 1, 1, 'Lample Post', '2023-11-31', 'https://example.com/sample_post.jpg', 'This is a sample post content.', 1);
 
 CREATE TABLE "Comments" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,

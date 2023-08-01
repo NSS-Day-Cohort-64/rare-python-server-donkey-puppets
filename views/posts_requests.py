@@ -1,5 +1,5 @@
 import sqlite3
-from models import Post, User
+from models import Post, User, Category
 def get_all_posts():
     with sqlite3.connect('db.sqlite3') as conn:
         conn.row_factory = sqlite3.Row
@@ -15,11 +15,20 @@ def get_all_posts():
            p.content,
            p.approved,
            u.first_name,
-           u.last_name
+           u.last_name,
+           u.email,
+           u.bio,
+           u.username,
+           u.password,
+           u.profile_image_url,
+           u.created_on,
+           u.active,
+           c.label
         FROM Posts p
-        JOIN User u
-            ON p.user_id = u.id
-        
+        JOIN Users u
+            ON u.id = p.user_id
+        JOIN Categories c
+            ON c.id = p.category_id
         """)
         all_posts = []
         dataset = db_cursor.fetchall()
@@ -29,5 +38,15 @@ def get_all_posts():
                 row['id'], row['user_id'], row['category_id'], row['title'],
                 row['publication_date'], row['image_url'], row['content'],
                 row['approved'])
+            single_user = User(
+                row['id'],row['first_name'],row['last_name'],row['email'],row['bio'],row['username'],
+                row['password'],row['profile_image_url'],row['created_on'],row['active'],
+            )
+            single_category = Category(
+                row['id'], row['label']
+            )
+            single_post.user = single_user.__dict__
+            single_post.category = single_category.__dict__
             all_posts.append(single_post.__dict__)
-    return all_posts
+            all_posts_sorted = sorted(all_posts, key=lambda post: post['publication_date'], reverse=True)
+    return all_posts_sorted

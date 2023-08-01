@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import (get_all_posts)
 from views.user import create_user, login_user
+from views import get_all_categories, get_single_category, get_all_posts
 from urllib.parse import urlparse
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -25,6 +25,23 @@ class HandleRequests(BaseHTTPRequestHandler):
             pass  # Request had trailing slash: /animals/
 
         return (resource, id, query_params)
+    def do_GET(self):
+        response = ""
+        parsed = self.parse_url(self.path)
+        ( resource, id, query_params) = parsed
+
+        if resource == "Posts":
+            response = get_all_posts()
+            self._set_headers(200)
+
+        if resource == "categories":
+            if id is not None:
+                response = get_single_category(id)
+                self._set_headers(200)
+            else:
+                response = get_all_categories()
+                self._set_headers(200)
+        self.wfile.write(json.dumps(response).encode())
 
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
@@ -44,21 +61,12 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods',
-                         'GET, POST, PUT, DELETE')
+                        'GET, POST, PUT, DELETE')
         self.send_header('Access-Control-Allow-Headers',
-                         'X-Requested-With, Content-Type, Accept')
+                        'X-Requested-With, Content-Type, Accept')
         self.end_headers()
 
-    def do_GET(self):
-        response = ""
-        parsed = self.parse_url(self.path)
-        ( resource, id, query_params) = parsed
-
-        if resource == "Posts":
-            response = get_all_posts(query_params)
-            self._set_headers(200)
-        
-        self.wfile.write(json.dumps(response).encode())
+    
     def do_POST(self):
         """Make a post request to the server"""
         self._set_headers(201)
