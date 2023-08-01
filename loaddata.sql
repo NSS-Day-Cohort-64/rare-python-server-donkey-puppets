@@ -28,7 +28,6 @@ CREATE TABLE "DemotionQueue" (
   PRIMARY KEY (action, admin_id, approver_one_id)
 );
 
-
 CREATE TABLE "Subscriptions" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "follower_id" INTEGER,
@@ -39,7 +38,6 @@ CREATE TABLE "Subscriptions" (
 );
 INSERT INTO "Subscriptions" ("id", "follower_id", "author_id", "created_on")
 VALUES (1, 1, 2, '2023-07-31');
-
 
 CREATE TABLE "Posts" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,6 +51,7 @@ CREATE TABLE "Posts" (
   FOREIGN KEY(`user_id`) REFERENCES `Users`(`id`),
   FOREIGN KEY(`category_id`) REFERENCES `Categories`(`id`)
 );
+
 INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date", "image_url", "content", "approved")
 VALUES (1, 1, 1, 'Sample Post', '2023-07-31', 'https://example.com/sample_post.jpg', 'This is a sample post content.', 1);
 
@@ -64,13 +63,16 @@ CREATE TABLE "Comments" (
   FOREIGN KEY(`post_id`) REFERENCES `Posts`(`id`),
   FOREIGN KEY(`author_id`) REFERENCES `Users`(`id`)
 );
+
 INSERT INTO "Comments" ("id", "post_id", "author_id", "content")
 VALUES (NULL, 1, 2, 'This is a sample comment.');
+
 CREATE TABLE "Reactions" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "label" varchar,
   "image_url" varchar
 );
+
 INSERT INTO "Reactions" ("id", "label", "image_url")
 VALUES (NULL, 'Thumbs Up', 'https://example.com/sample_post.jpg');
 
@@ -103,6 +105,7 @@ CREATE TABLE "PostTags" (
   FOREIGN KEY(`post_id`) REFERENCES `Posts`(`id`),
   FOREIGN KEY(`tag_id`) REFERENCES `Tags`(`id`)
 );
+
 INSERT INTO "PostTags" ("id", "post_id", "tag_id")
 VALUES (NULL, 1, 1);
 
