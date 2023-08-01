@@ -10,7 +10,7 @@ CATEGORY = [
 ]
 
 def get_all_categories():
-    """function to get all species"""
+    """function to get all categories"""
     with sqlite3.connect("./data.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
@@ -22,14 +22,15 @@ def get_all_categories():
         FROM categories c
         """)
 
-        categories = []
         dataset = db_cursor.fetchall()
 
-        for row in dataset:
-            category = Category(row['id'], row['label'])
-            categories.append(category.__dict__)
+        # Fetch the categories and store them in a list of Category objects
+        categories = [Category(row['id'], row['label']) for row in dataset]
 
-    return categories
+        # Sort the categories alphabetically based on the 'label' property
+        categories.sort(key=lambda x: x.label)
+
+    return [category.__dict__ for category in categories]
 
 def get_single_category(id):
     """function to get single location"""
