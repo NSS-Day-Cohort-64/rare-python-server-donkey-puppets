@@ -1,13 +1,20 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
+from views import get_all_tags, get_single_tag
+from views.user import create_user, login_user, get_all_users
+from views import create_tag
+from views.category_requests import get_all_categories, get_single_category, create_category
+from views.tag_requests import get_single_tag, get_all_tags
+from views import get_all_categories, get_single_category, get_all_posts
 from urllib.parse import urlparse
 import json
 from views import (
     get_all_tags, get_single_tag,
-    create_tag, create_post,  
+    create_tag, create_post, 
     create_user, login_user,
     get_all_categories, get_single_category,
     get_all_posts, create_category, get_post_by_id, get_all_users,
-    get_user_by_id
+    get_user_by_id, delete_post
 )
 
 
@@ -39,31 +46,33 @@ class HandleRequests(BaseHTTPRequestHandler):
         response = ""
         parsed = self.parse_url(self.path)
         ( resource, id, query_params) = parsed
-        if id is not None:
-            if resource == "posts":
+
+        if resource == "posts":
+            if id is not None:
                 response = get_post_by_id(id)
-            if resource == "users":
-                response = get_user_by_id(id)
-        else:
-            if resource == "posts":
+                self._set_headers(200)
+            else:
                 response = get_all_posts()
-            elif resource == "users":
-                response = get_all_users()
-            elif resource == "categories":
-                if id is not None:
-                    response = get_single_category(id)
-                else:
-                    response = get_all_categories()
-            elif resource == "tags":
-                if id is not None:
-                    response = get_single_tag(id)
-                else:
-                    response = get_all_tags()
-        if response is not None:
+                self._set_headers(200)
+        elif resource == "users":
+            response = get_all_users()
             self._set_headers(200)
-            self.wfile.write(json.dumps(response).encode())
-        else:
-            self._set_headers(404)
+        elif resource == "categories":
+            if id is not None:
+                response = get_single_category(id)
+                self._set_headers(200)
+            else:
+                response = get_all_categories()
+                self._set_headers(200)
+        elif resource == "tags":
+            if id is not None:
+                response = get_single_tag(id)
+                self._set_headers(200)
+            else:
+                response = get_all_tags()
+                self._set_headers(200)
+        self.wfile.write(json.dumps(response).encode())
+
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
         headers on the response
@@ -108,9 +117,26 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handles PUT requests to the server"""
         pass
 
+
     def do_DELETE(self):
-        """Handle DELETE Requests"""
-        pass
+
+        # Parse the URL
+        (resource, id, query_params) = self.parse_url(self.path)
+
+        success = False
+
+        if resource == "posts":
+                delete_post(id)
+                success = True
+
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
+            error_message = ""
+
+            self.wfile.write(json.dumps(error_message).encode())
+
 
 
 def main():
