@@ -2,8 +2,11 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import get_all_tags, get_single_tag
 from views.user import create_user, login_user
+from views.category_requests import get_all_categories, get_single_category, create_category
+from views.tag_requests import get_single_tag, get_all_tags
 from views.category_requests import get_all_categories, get_single_category
 from views import create_post
+
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -28,6 +31,9 @@ class HandleRequests(BaseHTTPRequestHandler):
                 pass
             return (resource, id)
 
+    
+
+
     def do_GET(self):
         response = {}
         parsed = self.parse_url()
@@ -48,31 +54,6 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = get_all_tags()
                 self._set_headers(200)
         self.wfile.write(json.dumps(response).encode())
-    # def do_GET(self):
-    #     self._set_headers(200)
-
-    #     response = {}
-
-    #     # Parse URL and store entire tuple in a variable
-    #     parsed = self.parse_url(self.path)
-
-    #     # If the path does not include a query parameter, continue with the original if block
-    #     if '?' not in self.path:
-    #         (resource, id) = parsed
-
-    #         if resource == "tags":
-    #             if id is not None:
-    #                 response = get_single_tag(id)
-    #             else:
-    #                 response = get_all_tags()
-    #         if resource == "categories":
-    #             if id is not None:
-    #                 response = get_single_category(id)
-    #             else:
-    #                 response = get_all_categories()
-
-    #     self.wfile.write(json.dumps(response).encode())
-
 
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
@@ -110,6 +91,10 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = login_user(post_body)
         elif resource == 'register':
             response = create_user(post_body)
+
+        if resource == 'categories':
+            response = create_category(post_body)
+
         elif resource == 'posts':
             response = create_post(post_body)
 
@@ -122,6 +107,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             error_response = {"error": "Invalid request"}
             error_response_str = json.dumps(error_response)
             self.wfile.write(error_response_str.encode())
+
 
 
     def do_PUT(self):
