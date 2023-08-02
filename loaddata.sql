@@ -44,18 +44,19 @@ CREATE TABLE "Posts" (
   "category_id" INTEGER,
   "title" varchar,
   "publication_date" date,
+  "image_url" varchar,
   "content" varchar,
   "approved" bit,
   FOREIGN KEY(`user_id`) REFERENCES `Users`(`id`),
   FOREIGN KEY(`category_id`) REFERENCES `Categories`(`id`)
 );
-
+DROP TABLE Posts
 
 
 
 INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date", "content", "approved")
 VALUES (NUll, 1, 1, 'Lample Post', '2023-11-31', 'This is a sample post content.', 1);
-drop table Posts
+
 
 CREATE TABLE "Comments" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
