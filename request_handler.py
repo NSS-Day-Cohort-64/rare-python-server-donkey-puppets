@@ -33,7 +33,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         parsed = self.parse_url(self.path)
         ( resource, id, query_params) = parsed
 
-        if resource == "Posts":
+        if resource == "posts":
             response = get_all_posts()
             self._set_headers(200)
 
@@ -108,7 +108,8 @@ class HandleRequests(BaseHTTPRequestHandler):
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)
-        resource, id = self.parse_url()
+        parsed = self.parse_url(self.path)
+        ( resource, id, query_params) = parsed
         response = None
 
         if resource == 'login':

@@ -50,3 +50,23 @@ def get_all_posts():
             all_posts.append(single_post.__dict__)
             all_posts_sorted = sorted(all_posts, key=lambda post: post['publication_date'], reverse=True)
     return all_posts_sorted
+
+def create_post(new_post):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        INSERT INTO Posts
+            ( user_id, category_id, title, publication_date,image_url, content, approved )
+        VALUES
+            ( ?, ?, ?, ?, ?, ?, ?);
+        """, (new_post['user_id'], new_post['category_id'], new_post['title'],
+            new_post['publication_date'], new_post['image_url'], new_post['content'], new_post['approved']
+            ))
+
+        id = db_cursor.lastrowid
+
+        new_post['id'] = id
+
+
+    return new_post
