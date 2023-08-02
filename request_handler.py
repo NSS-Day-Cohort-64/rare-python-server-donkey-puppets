@@ -8,7 +8,7 @@ from views.tag_requests import get_single_tag, get_all_tags
 from views import get_all_categories, get_single_category, get_all_posts
 from urllib.parse import urlparse
 from views import create_post
-from views import get_all_users
+
 
 
 
@@ -41,11 +41,6 @@ class HandleRequests(BaseHTTPRequestHandler):
         if resource == "posts":
             response = get_all_posts()
             self._set_headers(200)
-
-        if resource == "users":
-            response = get_all_users()
-            self._set_headers(200)
-
         if resource == "categories":
             if id is not None:
                 response = get_single_category(id)
