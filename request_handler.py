@@ -2,37 +2,45 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import get_all_tags, get_single_tag
 from views.user import create_user, login_user
-from views.category_requests import get_all_categories, get_single_category
+from views import create_tag
+from views.category_requests import get_all_categories, get_single_category, create_category
+from views.tag_requests import get_single_tag, get_all_tags
+from views import get_all_categories, get_single_category, get_all_posts
+from urllib.parse import urlparse
 from views import create_post
+
 
 
 class HandleRequests(BaseHTTPRequestHandler):
     """Handles the requests to this server"""
+    def parse_url(self, path):
+        url_components = urlparse(path)
+        path_params = url_components.path.strip("/").split("/")
+        query_params = []
 
-    def parse_url(self):
-        """Parse the url into the resource and id"""
-        path_params = self.path.split('/')
-        resource = path_params[1]
-        if '?' in resource:
-            param = resource.split('?')[1]
-            resource = resource.split('?')[0]
-            pair = param.split('=')
-            key = pair[0]
-            value = pair[1]
-            return (resource, key, value)
-        else:
-            id = None
-            try:
-                id = int(path_params[2])
-            except (IndexError, ValueError):
-                pass
-            return (resource, id)
+        if url_components.query != '':
+            query_params = url_components.query.split("&")
 
+        resource = path_params[0]
+        id = None
+
+        try:
+            id = int(path_params[1])
+        except IndexError:
+            pass  # No route parameter exists: /animals
+        except ValueError:
+            pass  # Request had trailing slash: /animals/
+
+        return (resource, id, query_params)
     def do_GET(self):
-        response = {}
-        parsed = self.parse_url()
+        response = ""
+        parsed = self.parse_url(self.path)
+        ( resource, id, query_params) = parsed
 
-        (resource, id) = parsed
+        if resource == "posts":
+            response = get_all_posts()
+            self._set_headers(200)
+
         if resource == "categories":
             if id is not None:
                 response = get_single_category(id)
@@ -48,31 +56,6 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = get_all_tags()
                 self._set_headers(200)
         self.wfile.write(json.dumps(response).encode())
-    # def do_GET(self):
-    #     self._set_headers(200)
-
-    #     response = {}
-
-    #     # Parse URL and store entire tuple in a variable
-    #     parsed = self.parse_url(self.path)
-
-    #     # If the path does not include a query parameter, continue with the original if block
-    #     if '?' not in self.path:
-    #         (resource, id) = parsed
-
-    #         if resource == "tags":
-    #             if id is not None:
-    #                 response = get_single_tag(id)
-    #             else:
-    #                 response = get_all_tags()
-    #         if resource == "categories":
-    #             if id is not None:
-    #                 response = get_single_category(id)
-    #             else:
-    #                 response = get_all_categories()
-
-    #     self.wfile.write(json.dumps(response).encode())
-
 
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
@@ -97,14 +80,52 @@ class HandleRequests(BaseHTTPRequestHandler):
                         'X-Requested-With, Content-Type, Accept')
         self.end_headers()
 
+    
+    # def do_POST(self):
+    #     """Make a post request to the server"""
+        
+    #     content_len = int(self.headers.get('content-length', 0))
+    #     post_body = json.loads(self.rfile.read(content_len))
+    #     response = None
+    #     parsed = self.parse_url(self.path)
+    #     ( resource, id, query_params) = parsed
+    #     post_body = self.rfile.read(content_len)
+    #     post_body = json.loads(post_body)
+    #     parsed = self.parse_url(self.path)
+
+    #     if resource == 'login':
+    #         response = login_user(post_body)
+    #     elif resource == 'register':
+    #         response = create_user(post_body)
+    #     elif resource == 'tags':
+    #         response = create_tag(post_body)
+
+    #     self.wfile.write(json.dumps(response).encode())
+    #     if resource == 'categories':
+    #         response = create_category(post_body)
+
+    #     elif resource == 'posts':
+    #         response = create_post(post_body)
+
+    #     if response is not None:
+    #         self._set_headers(201)
+    #         response_str = json.dumps(response)
+    #         self.wfile.write(response_str.encode())
+    #     else:
+    #         self._set_headers(400)
+    #         error_response = {"error": "Invalid request"}
+    #         error_response_str = json.dumps(error_response)
+    #         self.wfile.write(error_response_str.encode())
+
     def do_POST(self):
         """Make a post request to the server"""
         
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)
-        resource, id = self.parse_url()
         response = None
+        parsed = self.parse_url(self.path)
+        ( resource, id, query_params) = parsed
 
         if resource == 'login':
             response = login_user(post_body)
@@ -112,7 +133,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_user(post_body)
         elif resource == 'posts':
             response = create_post(post_body)
-
+        elif resource == 'tags':
+            response = create_tag(post_body)
         if response is not None:
             self._set_headers(201)
             response_str = json.dumps(response)
@@ -122,7 +144,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             error_response = {"error": "Invalid request"}
             error_response_str = json.dumps(error_response)
             self.wfile.write(error_response_str.encode())
-
 
     def do_PUT(self):
         """Handles PUT requests to the server"""

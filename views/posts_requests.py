@@ -1,5 +1,55 @@
 import sqlite3
+from models import Post, User, Category
+def get_all_posts():
+    with sqlite3.connect('db.sqlite3') as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT
+           p.id,
+           p.user_id,
+           p.category_id,
+           p.title,
+           p.publication_date,
+           p.image_url,
+           p.content,
+           p.approved,
+           u.first_name,
+           u.last_name,
+           u.email,
+           u.bio,
+           u.username,
+           u.password,
+           u.profile_image_url,
+           u.created_on,
+           u.active,
+           c.label
+        FROM Posts p
+        JOIN Users u
+            ON u.id = p.user_id
+        JOIN Categories c
+            ON c.id = p.category_id
+        """)
+        all_posts = []
+        dataset = db_cursor.fetchall()
 
+        for row in dataset:
+            single_post = Post(
+                row['id'], row['user_id'], row['category_id'], row['title'],
+                row['publication_date'], row['image_url'], row['content'],
+                row['approved'])
+            single_user = User(
+                row['id'],row['first_name'],row['last_name'],row['email'],row['bio'],row['username'],
+                row['password'],row['profile_image_url'],row['created_on'],row['active'],
+            )
+            single_category = Category(
+                row['id'], row['label']
+            )
+            single_post.user = single_user.__dict__
+            single_post.category = single_category.__dict__
+            all_posts.append(single_post.__dict__)
+            all_posts_sorted = sorted(all_posts, key=lambda post: post['publication_date'], reverse=True)
+    return all_posts_sorted
 
 def create_post(new_post):
     with sqlite3.connect("./db.sqlite3") as conn:
@@ -7,21 +57,15 @@ def create_post(new_post):
 
         db_cursor.execute("""
         INSERT INTO Posts
-            ( user_id, category_id, title, publication_date, content, approved )
+            ( user_id, category_id, title, publication_date, image_url, content, approved )
         VALUES
-            ( ?, ?, ?, ?, ?, ? );
+            ( ?, ?, ?, ?, ?, ?, ?);
         """, (new_post['user_id'], new_post['category_id'], new_post['title'],
-            new_post['publication_date'], new_post['content'], new_post['approved']
+            new_post['publication_date'], new_post['image_url'], new_post['content'], new_post['approved']
             ))
 
-        # The `lastrowid` property on the cursor will return
-        # the primary key of the last thing that got added to
-        # the database.
         id = db_cursor.lastrowid
 
-        # Add the `id` property to the post dictionary that
-        # was sent by the client so that the client sees the
-        # primary key in the response.
         new_post['id'] = id
 
 
