@@ -3,6 +3,7 @@ import json
 from views import get_all_tags, get_single_tag
 from views.user import create_user, login_user
 from views.category_requests import get_all_categories, get_single_category
+from views import create_post
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -74,18 +75,30 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """Make a post request to the server"""
-        self._set_headers(201)
+        
         content_len = int(self.headers.get('content-length', 0))
-        post_body = json.loads(self.rfile.read(content_len))
-        response = ''
-        resource, _ = self.parse_url()
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+        resource, id = self.parse_url()
+        response = None
 
         if resource == 'login':
             response = login_user(post_body)
-        if resource == 'register':
+        elif resource == 'register':
             response = create_user(post_body)
+        elif resource == 'posts':
+            response = create_post(post_body)
 
-        self.wfile.write(response.encode())
+        if response is not None:
+            self._set_headers(201)
+            response_str = json.dumps(response)
+            self.wfile.write(response_str.encode())
+        else:
+            self._set_headers(400)
+            error_response = {"error": "Invalid request"}
+            error_response_str = json.dumps(error_response)
+            self.wfile.write(error_response_str.encode())
+
 
     def do_PUT(self):
         """Handles PUT requests to the server"""
