@@ -56,10 +56,6 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = get_all_tags()
                 self._set_headers(200)
         self.wfile.write(json.dumps(response).encode())
-<<<<<<< HEAD
-
-=======
->>>>>>> b3e73b0ab6e80fe5e076bb2144e32025b87562d1
 
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
