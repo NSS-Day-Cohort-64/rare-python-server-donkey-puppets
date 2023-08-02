@@ -135,6 +135,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_post(post_body)
         elif resource == 'tags':
             response = create_tag(post_body)
+        elif resource == 'categories':
+            response = create_category(post_body)
         if response is not None:
             self._set_headers(201)
             response_str = json.dumps(response)
