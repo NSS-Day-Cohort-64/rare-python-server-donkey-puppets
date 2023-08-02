@@ -37,8 +37,7 @@ CREATE TABLE "Subscriptions" (
   FOREIGN KEY(`follower_id`) REFERENCES `Users`(`id`),
   FOREIGN KEY(`author_id`) REFERENCES `Users`(`id`)
 );
-INSERT INTO "Subscriptions" ("id", "follower_id", "author_id", "created_on")
-VALUES (1, 1, 2, '2023-07-31');
+
 
 
 CREATE TABLE "Posts" (
@@ -47,15 +46,14 @@ CREATE TABLE "Posts" (
   "category_id" INTEGER,
   "title" varchar,
   "publication_date" date,
-  "image_url" varchar,
   "content" varchar,
   "approved" bit,
   FOREIGN KEY(`user_id`) REFERENCES `Users`(`id`),
   FOREIGN KEY(`category_id`) REFERENCES `Categories`(`id`)
 );
-INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date", "image_url", "content", "approved")
-VALUES (NUll, 1, 1, 'Lample Post', '2023-11-31', 'https://example.com/sample_post.jpg', 'This is a sample post content.', 1);
-
+INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date", "content", "approved")
+VALUES (NUll, 1, 1, 'Lample Post', '2023-11-31', 'This is a sample post content.', 1);
+drop table Posts
 CREATE TABLE "Comments" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "post_id" INTEGER,
@@ -64,15 +62,13 @@ CREATE TABLE "Comments" (
   FOREIGN KEY(`post_id`) REFERENCES `Posts`(`id`),
   FOREIGN KEY(`author_id`) REFERENCES `Users`(`id`)
 );
-INSERT INTO "Comments" ("id", "post_id", "author_id", "content")
-VALUES (NULL, 1, 2, 'This is a sample comment.');
+
 CREATE TABLE "Reactions" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "label" varchar,
   "image_url" varchar
 );
-INSERT INTO "Reactions" ("id", "label", "image_url")
-VALUES (NULL, 'Thumbs Up', 'https://example.com/sample_post.jpg');
+
 
 CREATE TABLE "PostReactions" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,16 +80,14 @@ CREATE TABLE "PostReactions" (
   FOREIGN KEY(`post_id`) REFERENCES `Posts`(`id`)
 );
 -- Insert a reaction into the "PostReactions" table
-INSERT INTO "PostReactions" ("id", "user_id", "reaction_id", "post_id")
-VALUES (NULL, 1, 2, 1);
+
 
 CREATE TABLE "Tags" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "label" varchar
 );
 -- Insert a reaction into the "PostReactions" table
-INSERT INTO "TAGS" ("id", "label")
-VALUES (NULL, '#Swifty');
+
 
 
 CREATE TABLE "PostTags" (
@@ -103,8 +97,7 @@ CREATE TABLE "PostTags" (
   FOREIGN KEY(`post_id`) REFERENCES `Posts`(`id`),
   FOREIGN KEY(`tag_id`) REFERENCES `Tags`(`id`)
 );
-INSERT INTO "PostTags" ("id", "post_id", "tag_id")
-VALUES (NULL, 1, 1);
+
 
 CREATE TABLE "Categories" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,3 +108,28 @@ CREATE TABLE "Categories" (
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
 INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
+INSERT INTO Users ("first_name", "last_name", "email", "bio", "username", "password", "profile_image_url", "created_on", "active")
+VALUES
+  ('Logan', 'Belew', 'Logan.doe@example.com', 'Hello, I am Logan.', 'LoganBelew1', '1', 'https://example.com/johndoe.jpg', '2023-07-31', True),
+  ('Logan', 'Welch', 'Logan.Welch@example.com', 'Hi, I am Logan.', 'LoganWelch1', '1', 'https://example.com/janesmith.jpg', '2023-07-31', True),
+  ('Katie', 'Zarbock', 'Katie.Zarbock@example.com', 'Hey, I am Mike.', 'KatieZarbock1', '1', 'https://example.com/mikejohnson.jpg', '2023-07-31', True),
+  ('Randy', 'Hamm', 'Randy.Hamm@example.com', 'Greetings, I am Emily.', 'RandyHamm1', '1', 'https://example.com/emilybrown.jpg', '2023-07-31', True),
+  ('Austin', 'Warrick', 'Austin.Warrick@example.com', 'Nice to meet you, I am Alex.', 'AustinWarrick1', '1', 'https://example.com/alexlee.jpg', '2023-07-31', True);
+INSERT INTO Subscriptions ("id", "follower_id", "author_id", "created_on")
+VALUES (1, 1, 2, '2023-07-31');
+INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date", "image_url", "content", "approved")
+VALUES (1, 1, 1, 'Sample Post', '2023-07-31', 'https://example.com/sample_post.jpg', 'This is a sample post content.', 1);
+INSERT INTO "Comments" ("id", "post_id", "author_id", "content")
+VALUES (NULL, 1, 2, 'This is a sample comment.');
+INSERT INTO "Reactions" ("id", "label", "image_url")
+VALUES (NULL, 'Thumbs Up', 'https://example.com/sample_post.jpg');
+INSERT INTO "TAGS" ("id", "label")
+VALUES (NULL, '#Swifty');
+INSERT INTO PostReactions ("id", "user_id", "reaction_id", "post_id")
+VALUES (NULL, 1, 2, 1);
+INSERT INTO "PostTags" ("id", "post_id", "tag_id")
+VALUES (NULL, 1, 1);
+INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Philosophy');
+INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Conspiracy');
+INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Jimmy Carter Fan Fic');
+INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Recipes');
