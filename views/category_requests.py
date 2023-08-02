@@ -13,7 +13,7 @@ def get_all_categories():
         SELECT
             c.id,
             c.label
-        FROM categories c
+        FROM Categories c
         """)
 
         dataset = db_cursor.fetchall()
