@@ -54,12 +54,12 @@ def get_single_category(id):
             return category.__dict__
 
 def create_category(new_category):
-    """function to create new owner"""
+    """function to create new category"""
     with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
-        INSERT INTO Categories
+        INSERT INTO categories
             ( label )
         VALUES
             ( ? );
