@@ -2,6 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import get_all_tags, get_single_tag
 from views.user import create_user, login_user
+from views import create_tag
 from views.category_requests import get_all_categories, get_single_category, create_category
 from views.tag_requests import get_single_tag, get_all_tags
 from views.category_requests import get_all_categories, get_single_category
@@ -35,6 +36,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
 
     def do_GET(self):
+        """ Handles GET requests"""
         response = {}
         parsed = self.parse_url()
 
@@ -82,16 +84,26 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Make a post request to the server"""
         
         content_len = int(self.headers.get('content-length', 0))
+        post_body = json.loads(self.rfile.read(content_len))
+        response = ''
+        (resource, id) = self.parse_url()
+
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)
         resource, id = self.parse_url()
         response = None
+
 
         if resource == 'login':
             response = login_user(post_body)
         elif resource == 'register':
             response = create_user(post_body)
 
+
+        elif resource == 'tags':
+            response = create_tag(post_body)
+
+        self.wfile.write(json.dumps(response).encode())
         if resource == 'categories':
             response = create_category(post_body)
 

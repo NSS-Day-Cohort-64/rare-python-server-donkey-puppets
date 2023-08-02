@@ -28,7 +28,6 @@ CREATE TABLE "DemotionQueue" (
   PRIMARY KEY (action, admin_id, approver_one_id)
 );
 
-
 CREATE TABLE "Subscriptions" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "follower_id" INTEGER,
@@ -37,7 +36,6 @@ CREATE TABLE "Subscriptions" (
   FOREIGN KEY(`follower_id`) REFERENCES `Users`(`id`),
   FOREIGN KEY(`author_id`) REFERENCES `Users`(`id`)
 );
-
 
 
 CREATE TABLE "Posts" (
@@ -51,9 +49,14 @@ CREATE TABLE "Posts" (
   FOREIGN KEY(`user_id`) REFERENCES `Users`(`id`),
   FOREIGN KEY(`category_id`) REFERENCES `Categories`(`id`)
 );
+
+
+
+
 INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date", "content", "approved")
 VALUES (1, 1, 1, 'Sample Post', '2023-07-31', 'This is a sample post content.', 1);
 drop table Posts
+
 CREATE TABLE "Comments" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "post_id" INTEGER,
@@ -63,11 +66,14 @@ CREATE TABLE "Comments" (
   FOREIGN KEY(`author_id`) REFERENCES `Users`(`id`)
 );
 
+
+
 CREATE TABLE "Reactions" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "label" varchar,
   "image_url" varchar
 );
+
 
 
 CREATE TABLE "PostReactions" (
@@ -97,6 +103,7 @@ CREATE TABLE "PostTags" (
   FOREIGN KEY(`post_id`) REFERENCES `Posts`(`id`),
   FOREIGN KEY(`tag_id`) REFERENCES `Tags`(`id`)
 );
+
 
 
 CREATE TABLE "Categories" (
