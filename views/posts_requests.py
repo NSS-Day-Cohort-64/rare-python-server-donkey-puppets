@@ -57,7 +57,7 @@ def create_post(new_post):
 
         db_cursor.execute("""
         INSERT INTO Posts
-            ( user_id, category_id, title, publication_date,image_url, content, approved )
+            ( user_id, category_id, title, publication_date, image_url, content, approved )
         VALUES
             ( ?, ?, ?, ?, ?, ?, ?);
         """, (new_post['user_id'], new_post['category_id'], new_post['title'],
