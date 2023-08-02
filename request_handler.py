@@ -9,7 +9,7 @@ from views.category_requests import get_all_categories, get_single_category
 class HandleRequests(BaseHTTPRequestHandler):
     """Handles the requests to this server"""
 
-    def parse_url(self, path):
+    def parse_url(self):
         """Parse the url into the resource and id"""
         path_params = self.path.split('/')
         resource = path_params[1]
@@ -29,6 +29,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             return (resource, id)
 
     def do_GET(self):
+        """ Handles GET requests"""
         response = {}
         parsed = self.parse_url()
 
@@ -48,30 +49,7 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = get_all_tags()
                 self._set_headers(200)
         self.wfile.write(json.dumps(response).encode())
-    # def do_GET(self):
-    #     self._set_headers(200)
 
-    #     response = {}
-
-    #     # Parse URL and store entire tuple in a variable
-    #     parsed = self.parse_url(self.path)
-
-    #     # If the path does not include a query parameter, continue with the original if block
-    #     if '?' not in self.path:
-    #         (resource, id) = parsed
-
-    #         if resource == "tags":
-    #             if id is not None:
-    #                 response = get_single_tag(id)
-    #             else:
-    #                 response = get_all_tags()
-    #         if resource == "categories":
-    #             if id is not None:
-    #                 response = get_single_category(id)
-    #             else:
-    #                 response = get_all_categories()
-
-    #     self.wfile.write(json.dumps(response).encode())
 
 
     def _set_headers(self, status):
@@ -103,7 +81,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         content_len = int(self.headers.get('content-length', 0))
         post_body = json.loads(self.rfile.read(content_len))
         response = ''
-        (resource, id) = self.parse_url(self.path)
+        (resource, id) = self.parse_url()
 
         if resource == 'login':
             response = login_user(post_body)

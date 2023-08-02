@@ -21,7 +21,7 @@ def get_all_tags():
         dataset = db_cursor.fetchall()
 
         # Iterate list of data returned from database
-        
+
         tags = [Tag(row['id'], row['label']) for row in dataset]
 
         tags.sort(key=lambda x: x.label)
@@ -46,7 +46,6 @@ def get_single_tag(id):
         WHERE t.id = ?
         """, (id, ))
 
-
         # Load the single result into memory
         data = db_cursor.fetchone()
         if data is None:
@@ -60,7 +59,6 @@ def get_single_tag(id):
             tag = Tag(data['id'], data['label'])
 
             return tag.__dict__
-import sqlite3
 
 
 def create_tag(new_tag):
