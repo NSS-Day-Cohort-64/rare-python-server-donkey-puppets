@@ -67,6 +67,7 @@ def get_post_by_id(id):
            p.image_url,
            p.content,
            p.approved,
+           u.id as user_id,
            u.first_name,
            u.last_name,
            u.email,
@@ -76,6 +77,7 @@ def get_post_by_id(id):
            u.profile_image_url,
            u.created_on,
            u.active,
+           c.id as category_id,       
            c.label
         FROM Posts p
         JOIN Users u
@@ -91,10 +93,10 @@ def get_post_by_id(id):
                 data['publication_date'], data['image_url'], data['content'],
                 data['approved'])
     single_user = User(
-                data['id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'],
+                data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'],
                 data['password'], data['profile_image_url'], data['created_on'], data['active'],
             )
-    single_category = Category(data['id'], data['label'])
+    single_category = Category(data['category_id'], data['label'])
     
     post.user = single_user.__dict__
     post.category = single_category.__dict__
