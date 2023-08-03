@@ -1,5 +1,7 @@
 import sqlite3
 from models import Post, User, Category
+
+
 def get_all_posts():
     with sqlite3.connect('db.sqlite3') as conn:
         conn.row_factory = sqlite3.Row
@@ -39,8 +41,8 @@ def get_all_posts():
                 row['publication_date'], row['image_url'], row['content'],
                 row['approved'])
             single_user = User(
-                row['id'],row['first_name'],row['last_name'],row['email'],row['bio'],row['username'],
-                row['password'],row['profile_image_url'],row['created_on'],row['active'],
+                row['id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'],
+                row['password'], row['profile_image_url'], row['created_on'], row['active'],
             )
             single_category = Category(
                 row['id'], row['label']
@@ -48,7 +50,8 @@ def get_all_posts():
             single_post.user = single_user.__dict__
             single_post.category = single_category.__dict__
             all_posts.append(single_post.__dict__)
-            all_posts_sorted = sorted(all_posts, key=lambda post: post['publication_date'], reverse=True)
+            all_posts_sorted = sorted(
+                all_posts, key=lambda post: post['publication_date'], reverse=True)
     return all_posts_sorted
 
 
@@ -113,6 +116,7 @@ def get_single_post(id):
             return post.__dict__
 
 
+
 def create_post(new_post):
     with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
@@ -123,13 +127,12 @@ def create_post(new_post):
         VALUES
             ( ?, ?, ?, ?, ?, ?, ?);
         """, (new_post['user_id'], new_post['category_id'], new_post['title'],
-            new_post['publication_date'], new_post['image_url'], new_post['content'], new_post['approved']
-            ))
+              new_post['publication_date'], new_post['image_url'], new_post['content'], new_post['approved']
+              ))
 
         id = db_cursor.lastrowid
 
         new_post['id'] = id
-
 
     return new_post
 
