@@ -41,7 +41,7 @@ def get_all_posts():
                 row['approved'])
             single_user = User(
                 row['id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'],
-                row['password'], row['profile_image_url'], row['created_on'], row['active'],
+                row['password'], row['created_on'], row['active'],
             )
             single_category = Category(
                 row['id'], row['label']
@@ -74,7 +74,6 @@ def get_post_by_id(id):
            u.bio,
            u.username,
            u.password,
-           u.profile_image_url,
            u.created_on,
            u.active,
            c.id as category_id,       
@@ -94,7 +93,7 @@ def get_post_by_id(id):
                 data['approved'])
     single_user = User(
                 data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'],
-                data['password'], data['profile_image_url'], data['created_on'], data['active'],
+                data['password'], data['created_on'], data['active'],
             )
     single_category = Category(data['category_id'], data['label'])
     

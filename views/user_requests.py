@@ -4,36 +4,56 @@ from datetime import datetime
 from models import User
 
 def get_all_users():
-  
-    with sqlite3.connect('./db.sqlite3') as conn:
+    """ Gets all users """
+    # Open a connection to the database
+    with sqlite3.connect("./db.sqlite3") as conn:
+
+        # Just use these. It's a Black Box.
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
+        # Write the SQL query to get the information you want
         db_cursor.execute("""
-            SELECT id, first_name, last_name, email, bio, username, profile_image_url, created_on, active
-            FROM Users
-            ORDER BY username
+       SELECT 
+           u.id,
+           u.first_name,
+           u.last_name,
+           u.email,
+           u.bio,
+           u.username,
+           u.password,
+           u.created_on,
+           u.active
+        FROM Users u
+        ORDER BY username
         """)
 
-        users_from_db = db_cursor.fetchall()
+        # Initialize an empty list to hold all snake representations
+        users = []
 
-        # Format the result into a list of dictionaries
-        users_list = []
-        for user in users_from_db:
-            user_dict = {
-                'id': user['id'],
-                'first_name': user['first_name'],
-                'last_name': user['last_name'],
-                'email': user['email'],
-                'bio': user['bio'],
-                'username': user['username'],
-                'profile_image_url': user['profile_image_url'],
-                'created_on': datetime.strptime(user['created_on'], '%Y-%m-%d').strftime('%B %d, %Y'),
-                'active': user['active']
-            }
-            users_list.append(user_dict)
+        # Convert rows of data into a Python list
+        dataset = db_cursor.fetchall()
 
-        return users_list
+        # Iterate list of data returned from database
+        for row in dataset:
+
+            # Create a Snake instance from the current row
+            user = User(
+                row['id'],
+                row['first_name'],
+                row['last_name'],
+                row['email'],
+                row['bio'],
+                row['username'],
+                row['password'],
+                row['created_on'],
+                row['active']
+            )
+
+            # Add the dictionary representation of the users to the list
+            users.append(user.__dict__)
+
+    return users
 
 def get_user_by_id(id):
     with sqlite3.connect('db.sqlite3') as conn:
@@ -48,7 +68,6 @@ def get_user_by_id(id):
            u.bio,
            u.username,
            u.password,
-           u.profile_image_url,
            u.created_on,
            u.active
         FROM Users u
@@ -57,7 +76,7 @@ def get_user_by_id(id):
     data = db_cursor.fetchone()
     user = User(
                 data['id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'],
-                data['password'], data['profile_image_url'], data['created_on'], data['active'],
+                data['password'], data['created_on'], data['active'],
             )
     return user.__dict__
 def login_user(user):
