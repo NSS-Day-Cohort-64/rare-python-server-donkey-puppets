@@ -6,7 +6,7 @@ from views import (
     create_tag, create_post,  
     create_user, login_user,
     get_all_categories, get_single_category,
-    get_all_posts, create_category, get_post_by_id
+    get_all_posts, create_category, get_post_by_id, get_all_users
 )
 
 
@@ -33,6 +33,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             pass  # Request had trailing slash: /animals/
 
         return (resource, id, query_params)
+    
     def do_GET(self):
         response = ""
         parsed = self.parse_url(self.path)
@@ -41,15 +42,17 @@ class HandleRequests(BaseHTTPRequestHandler):
             if resource == "posts":
                 response = get_all_posts()
                 self._set_headers(200)
-
-            if resource == "categories":
+            elif resource == "users":
+                response = get_all_users()
+                self._set_headers(200)
+            elif resource == "categories":
                 if id is not None:
                     response = get_single_category(id)
                     self._set_headers(200)
                 else:
                     response = get_all_categories()
                     self._set_headers(200)
-            if resource == "tags":
+            elif resource == "tags":
                 if id is not None:
                     response = get_single_tag(id)
                     self._set_headers(200)
@@ -59,7 +62,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(response).encode())
         else:
             if query_params.get('id') and resource == 'posts':
-                response = get_post_by_id(query['id'][0])
+                response = get_post_by_id(query_params['id'][0])
                 self._set_headers(200)
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
@@ -84,7 +87,8 @@ class HandleRequests(BaseHTTPRequestHandler):
                         'X-Requested-With, Content-Type, Accept')
         self.end_headers()
 
-
+    
+   
     def do_POST(self):
         """Make a post request to the server"""
         
