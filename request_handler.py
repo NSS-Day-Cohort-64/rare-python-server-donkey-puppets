@@ -5,7 +5,7 @@ from views.user import create_user, login_user
 from views import create_tag
 from views.category_requests import get_all_categories, get_single_category, create_category
 from views.tag_requests import get_single_tag, get_all_tags
-from views import get_all_categories, get_single_category, get_all_posts
+from views import get_all_categories, get_single_category, get_all_posts, delete_post, get_single_post
 from urllib.parse import urlparse
 from views import create_post
 
@@ -38,8 +38,12 @@ class HandleRequests(BaseHTTPRequestHandler):
         ( resource, id, query_params) = parsed
 
         if resource == "posts":
-            response = get_all_posts()
-            self._set_headers(200)
+            if id is not None:
+                response = get_single_post(id)
+                self._set_headers(200)
+            else:
+                response = get_all_posts()
+                self._set_headers(200)
 
         if resource == "categories":
             if id is not None:
@@ -135,6 +139,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_post(post_body)
         elif resource == 'tags':
             response = create_tag(post_body)
+        elif resource == 'categories':
+            response = create_category(post_body)
         if response is not None:
             self._set_headers(201)
             response_str = json.dumps(response)
@@ -151,7 +157,37 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         """Handle DELETE Requests"""
-        pass
+
+        # Parse the URL
+        (resource, id, query_params) = self.parse_url(self.path)
+
+        # Delete a single post from the list
+        if resource == "posts":
+            if delete_post(id):
+            # If the delete is successful, set headers to 204
+                self._set_headers(204)
+                self.wfile.write("".encode())
+            else:
+                self._set_headers(404)
+                self.wfile.write("".encode())
+        else:
+        # If the resource is not recognized then set th status to 404 and
+        # return an empty string in the response 
+            self._set_headers(404)
+            response = ""
+            self.wfile.write(json.dumps(response).encode())
+
+    # def do_DELETE(self):
+    #     """Handle DELETE Requests"""
+    #     self._set_headers(204)
+    #     # Parse the URL
+    #     (resource, id, query_params) = self.parse_url(self.path)
+
+    #     # Delete a single post from the list
+    #     if resource == "posts":
+    #         delete_post(id)
+
+    #     self.wfile.write("".encode())
 
 
 def main():
