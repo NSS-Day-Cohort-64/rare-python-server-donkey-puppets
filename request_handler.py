@@ -121,39 +121,46 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handles PUT requests to the server"""
         pass
 
+
     def do_DELETE(self):
-        """Handle DELETE Requests"""
 
         # Parse the URL
         (resource, id, query_params) = self.parse_url(self.path)
 
-        # Delete a single post from the list
-        if resource == "posts":
-            if delete_post(id):
-            # If the delete is successful, set headers to 204
-                self._set_headers(204)
-                self.wfile.write("".encode())
-            else:
-                self._set_headers(404)
-                self.wfile.write("".encode())
-        else:
-        # If the resource is not recognized then set th status to 404 and
-        # return an empty string in the response 
-            self._set_headers(404)
-            response = ""
-            self.wfile.write(json.dumps(response).encode())
+        success = False
 
+        if resource == "posts":
+                delete_post(id)
+                success = True
+
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
+            error_message = ""
+
+            self.wfile.write(json.dumps(error_message).encode())
     # def do_DELETE(self):
     #     """Handle DELETE Requests"""
-    #     self._set_headers(204)
+
     #     # Parse the URL
     #     (resource, id, query_params) = self.parse_url(self.path)
 
     #     # Delete a single post from the list
     #     if resource == "posts":
-    #         delete_post(id)
-
-    #     self.wfile.write("".encode())
+    #         if delete_post(id):
+    #         # If the delete is successful, set headers to 204
+    #             self._set_headers(204)
+    #             self.wfile.write("".encode())
+    #         else:
+    #             self._set_headers(404)
+    #             self.wfile.write("".encode())
+    #     else:
+    #     # If the resource is not recognized then set th status to 404 and
+    #     # return an empty string in the response 
+    #         self._set_headers(404)
+    #         response = ""
+    #         self.wfile.write(json.dumps(response).encode())
 
 
 def main():
