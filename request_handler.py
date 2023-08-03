@@ -8,7 +8,7 @@ from views import (
     get_all_categories, get_single_category,
     get_all_posts, create_category, get_post_by_id, get_all_users,
     get_user_by_id, delete_post, get_comments_by_post_id, create_comment, create_subscription,
-    get_subscribed_posts
+    get_subscribed_posts, update_post
 )
 
 
@@ -131,8 +131,24 @@ class HandleRequests(BaseHTTPRequestHandler):
             self.wfile.write(error_response_str.encode())
 
     def do_PUT(self):
-        """Handles PUT requests to the server"""
-        pass
+        """function to handle PUT requests"""
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        (resource, id) = self.parse_url(self.path)
+        update_successful = False
+
+        if resource == "posts":
+            update_successful = update_post(id, post_body)
+
+        if update_successful:
+            self._set_headers(204)
+            self.wfile.write("".encode())
+        else:
+            self._set_headers(404)
+            response = ""
+            self.wfile.write(json.dumps(response).encode())
 
     def do_DELETE(self):
 
