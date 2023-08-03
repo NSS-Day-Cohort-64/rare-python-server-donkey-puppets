@@ -90,7 +90,15 @@ def get_post_by_id(id):
                 data['id'], data['user_id'], data['category_id'], data['title'],
                 data['publication_date'], data['image_url'], data['content'],
                 data['approved'])
-    return post
+    single_user = User(
+                data['id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'],
+                data['password'], data['profile_image_url'], data['created_on'], data['active'],
+            )
+    single_category = Category(data['id'], data['label'])
+    
+    post.user = single_user.__dict__
+    post.category = single_category.__dict__
+    return post.__dict__
 
 def create_post(new_post):
     with sqlite3.connect("./db.sqlite3") as conn:

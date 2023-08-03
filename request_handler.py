@@ -6,7 +6,8 @@ from views import (
     create_tag, create_post,  
     create_user, login_user,
     get_all_categories, get_single_category,
-    get_all_posts, create_category, get_post_by_id, get_all_users
+    get_all_posts, create_category, get_post_by_id, get_all_users,
+    get_user_by_id
 )
 
 
@@ -38,32 +39,31 @@ class HandleRequests(BaseHTTPRequestHandler):
         response = ""
         parsed = self.parse_url(self.path)
         ( resource, id, query_params) = parsed
-        if "?" not in self.path:
+        if id is not None:
+            if resource == "posts":
+                response = get_post_by_id(id)
+            if resource == "users":
+                response = get_user_by_id(id)
+        else:
             if resource == "posts":
                 response = get_all_posts()
-                self._set_headers(200)
             elif resource == "users":
                 response = get_all_users()
-                self._set_headers(200)
             elif resource == "categories":
                 if id is not None:
                     response = get_single_category(id)
-                    self._set_headers(200)
                 else:
                     response = get_all_categories()
-                    self._set_headers(200)
             elif resource == "tags":
                 if id is not None:
                     response = get_single_tag(id)
-                    self._set_headers(200)
                 else:
                     response = get_all_tags()
-                    self._set_headers(200)
+        if response is not None:
+            self._set_headers(200)
             self.wfile.write(json.dumps(response).encode())
         else:
-            if query_params.get('id') and resource == 'posts':
-                response = get_post_by_id(query_params['id'][0])
-                self._set_headers(200)
+            self._set_headers(404)
     def _set_headers(self, status):
         """Sets the status code, Content-Type and Access-Control-Allow-Origin
         headers on the response
