@@ -5,9 +5,18 @@ from views.user import create_user, login_user, get_all_users
 from views import create_tag
 from views.category_requests import get_all_categories, get_single_category, create_category
 from views.tag_requests import get_single_tag, get_all_tags
-from views import get_all_categories, get_single_category, get_all_posts, delete_post, get_single_post
+from views import get_all_categories, get_single_category, get_all_posts
 from urllib.parse import urlparse
-from views import create_post
+import json
+from views import (
+    get_all_tags, get_single_tag,
+    create_tag, create_post, 
+    create_user, login_user,
+    get_all_categories, get_single_category,
+    get_all_posts, create_category, get_post_by_id, get_all_users,
+    get_user_by_id
+)
+
 
 
 
@@ -40,7 +49,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "posts":
             if id is not None:
-                response = get_single_post(id)
+                response = get_post_by_id(id)
                 self._set_headers(200)
             else:
                 response = get_all_posts()
@@ -87,6 +96,8 @@ class HandleRequests(BaseHTTPRequestHandler):
                         'X-Requested-With, Content-Type, Accept')
         self.end_headers()
 
+    
+   
     def do_POST(self):
         """Make a post request to the server"""
         
@@ -140,27 +151,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             error_message = ""
 
             self.wfile.write(json.dumps(error_message).encode())
-    # def do_DELETE(self):
-    #     """Handle DELETE Requests"""
 
-    #     # Parse the URL
-    #     (resource, id, query_params) = self.parse_url(self.path)
-
-    #     # Delete a single post from the list
-    #     if resource == "posts":
-    #         if delete_post(id):
-    #         # If the delete is successful, set headers to 204
-    #             self._set_headers(204)
-    #             self.wfile.write("".encode())
-    #         else:
-    #             self._set_headers(404)
-    #             self.wfile.write("".encode())
-    #     else:
-    #     # If the resource is not recognized then set th status to 404 and
-    #     # return an empty string in the response 
-    #         self._set_headers(404)
-    #         response = ""
-    #         self.wfile.write(json.dumps(response).encode())
 
 
 def main():
