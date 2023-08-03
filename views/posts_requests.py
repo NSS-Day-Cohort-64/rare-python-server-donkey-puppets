@@ -50,7 +50,7 @@ def get_all_posts():
             single_post.category = single_category.__dict__
             all_posts.append(single_post.__dict__)
             all_posts_sorted = sorted(
-                all_posts, key=lambda post: str(post['publication_date']), reverse=True)
+                all_posts, key=lambda post: post['publication_date'], reverse=True)
     return all_posts_sorted
 
 def get_post_by_id(id):
