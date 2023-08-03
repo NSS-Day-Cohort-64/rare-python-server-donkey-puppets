@@ -39,23 +39,16 @@ class HandleRequests(BaseHTTPRequestHandler):
         ( resource, id, query_params) = parsed
 
         if resource == "posts":
-<<<<<<< HEAD
             if id is not None:
                 response = get_single_post(id)
                 self._set_headers(200)
             else:
                 response = get_all_posts()
                 self._set_headers(200)
-
-        if resource == "categories":
-=======
-            response = get_all_posts()
-            self._set_headers(200)
         elif resource == "users":
             response = get_all_users()
             self._set_headers(200)
         elif resource == "categories":
->>>>>>> main
             if id is not None:
                 response = get_single_category(id)
                 self._set_headers(200)
