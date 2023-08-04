@@ -96,8 +96,6 @@ class HandleRequests(BaseHTTPRequestHandler):
                         'X-Requested-With, Content-Type, Accept')
         self.end_headers()
 
-    
-   
     def do_POST(self):
         """Make a post request to the server"""
         
