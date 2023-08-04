@@ -246,3 +246,20 @@ INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Philosophy');
 INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Conspiracy');
 INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Jimmy Carter Fan Fic');
 INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Recipes');
+
+SELECT
+  p.id AS post_id,
+  p.user_id,
+  p.category_id,
+  p.title,
+  p.publication_date,
+  p.content,
+  p.approved,
+  t.id AS tag_id,
+  t.label AS tag_label
+FROM
+  Posts p
+LEFT JOIN
+  PostTags pt ON p.id = pt.post_id
+LEFT JOIN
+  Tags t ON pt.tag_id = t.id;
