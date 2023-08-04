@@ -14,7 +14,7 @@ from views import (
     create_user, login_user,
     get_all_categories, get_single_category,
     get_all_posts, create_category, get_post_by_id, get_all_users,
-    get_user_by_id, delete_post, get_comments_by_post_id
+    get_user_by_id, delete_post, get_comments_by_post_id, create_comment
 )
 
 
@@ -67,11 +67,9 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = get_single_tag(id)
                 else:
                     response = get_all_tags()
-        else:
-            (resource, query) = parsed
-            if query.get('post_id') and resource == 'comments':
-                response = get_comments_by_post_id(query['post_id'][0])
-        
+            elif resource == "comments":
+                if id is not None:
+                    response = get_comments_by_post_id(id)
         if response is not None:
             self._set_headers(200)
         else:
@@ -123,6 +121,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_tag(post_body)
         elif resource == 'categories':
             response = create_category(post_body)
+        elif resource == 'comments':
+            response = create_comment(post_body)
         if response is not None:
             self._set_headers(201)
             response_str = json.dumps(response)

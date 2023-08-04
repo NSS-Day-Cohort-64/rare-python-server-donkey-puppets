@@ -234,6 +234,10 @@ INSERT INTO "Posts" ("id", "user_id", "category_id", "title", "publication_date"
 VALUES (1, 1, 1, 'Sample Post', '2023-07-31', 'https://example.com/sample_post.jpg', 'This is a sample post content.', 1);
 INSERT INTO "Comments" ("id", "post_id", "author_id", "content")
 VALUES (NULL, 1, 2, 'This is a sample comment.');
+INSERT INTO "Comments" ("id", "post_id", "author_id", "content")
+VALUES (NULL, 1, 2, 'This is should appear.');
+INSERT INTO "Comments" ("id", "post_id", "author_id", "content")
+VALUES (NULL, 2, 2, 'This should not appear.');
 INSERT INTO "Reactions" ("id", "label", "image_url")
 VALUES (NULL, 'Thumbs Up', 'https://example.com/sample_post.jpg');
 INSERT INTO "TAGS" ("id", "label")
@@ -247,19 +251,3 @@ INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Conspiracy');
 INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Jimmy Carter Fan Fic');
 INSERT INTO Tags (`id`, `label`) VALUES (NULL, 'Recipes');
 
-SELECT
-  p.id AS post_id,
-  p.user_id,
-  p.category_id,
-  p.title,
-  p.publication_date,
-  p.content,
-  p.approved,
-  t.id AS tag_id,
-  t.label AS tag_label
-FROM
-  Posts p
-LEFT JOIN
-  PostTags pt ON p.id = pt.post_id
-LEFT JOIN
-  Tags t ON pt.tag_id = t.id;
