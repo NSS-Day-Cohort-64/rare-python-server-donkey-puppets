@@ -8,7 +8,7 @@ from views import (
     get_all_categories, get_single_category,
     get_all_posts, create_category, get_post_by_id, get_all_users,
     get_user_by_id, delete_post, get_comments_by_post_id, create_comment, create_subscription,
-    get_subscribed_posts
+    get_subscribed_posts, delete_comment
 )
 
 
@@ -145,6 +145,9 @@ class HandleRequests(BaseHTTPRequestHandler):
             delete_post(id)
             success = True
 
+        if resource == "comments":
+            delete_comment(id)
+            success = True
         if success:
             self._set_headers(204)
         else:
