@@ -1,5 +1,5 @@
 import sqlite3
-from models import Post, Subscription
+from models import Post, Subscription, Category
 def get_subscribed_posts(follower_id):
      with sqlite3.connect('db.sqlite3') as conn:
         conn.row_factory = sqlite3.Row
@@ -17,10 +17,14 @@ def get_subscribed_posts(follower_id):
             p.publication_date,
             p.image_url,
             p.content,
-            p.approved
+            p.approved,
+            c.id as category_id,
+            c.label
         FROM Subscriptions s
         JOIN Posts p
             ON p.user_id = s.author_id
+        JOIN Categories c
+            ON c.id = p.category_id
         WHERE s.follower_id = ?
     """, (follower_id,))
         dataset = db_cursor.fetchall()
@@ -31,7 +35,10 @@ def get_subscribed_posts(follower_id):
             post = Post(row['post_id'], row['user_id'], row['category_id'], row['title'],
                 row['publication_date'], row['image_url'], row['content'],
                 row['approved'])
+            
+            category = Category(row['category_id'], row['label'])
             subscription.post = post.__dict__
+            subscription.category = category.__dict__
 
             subscriptions.append(subscription.__dict__)
         return subscriptions
