@@ -14,7 +14,8 @@ from views import (
     create_user, login_user,
     get_all_categories, get_single_category,
     get_all_posts, create_category, get_post_by_id, get_all_users,
-    get_user_by_id, delete_post, get_comments_by_post_id, create_comment
+    get_user_by_id, delete_post, get_comments_by_post_id, create_comment,
+    get_subscribed_posts
 )
 
 
@@ -70,6 +71,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             elif resource == "comments":
                 if id is not None:
                     response = get_comments_by_post_id(id)
+            elif resource == "subscriptions":
+                response = get_subscribed_posts(id)
             else:
                 self._set_headers(404)
         if response is not None:
