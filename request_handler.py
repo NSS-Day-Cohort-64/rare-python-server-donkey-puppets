@@ -1,16 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import get_all_tags, get_single_tag
-from views.user import create_user, login_user, get_all_users
-from views import create_tag
-from views.category_requests import get_all_categories, get_single_category, create_category
-from views.tag_requests import get_single_tag, get_all_tags
-from views import get_all_categories, get_single_category, get_all_posts
 from urllib.parse import urlparse, parse_qs
-import json
 from views import (
     get_all_tags, get_single_tag,
-    create_tag, create_post, 
+    create_tag, create_post,
     create_user, login_user,
     get_all_categories, get_single_category,
     get_all_posts, create_category, get_post_by_id, get_all_users,
@@ -18,34 +11,31 @@ from views import (
 )
 
 
-
-
 class HandleRequests(BaseHTTPRequestHandler):
 
-
     def parse_url(self, path):
-       
-       parsed_url = urlparse(path)
-       path_params = parsed_url.path.split('/')  # ['', 'animals', 1]
-       resource = path_params[1]
 
-       if parsed_url.query:
+        parsed_url = urlparse(path)
+        path_params = parsed_url.path.split('/')  # ['', 'animals', 1]
+        resource = path_params[1]
+
+        if parsed_url.query:
             query = parse_qs(parsed_url.query)
             return (resource, query)
 
-       pk = None
-       try:
+        pk = None
+        try:
             pk = int(path_params[2])
-       except (IndexError, ValueError):
+        except (IndexError, ValueError):
             pass
-       return (resource, pk)
-    
+        return (resource, pk)
+
     def do_GET(self):
         response = None
         parsed = self.parse_url(self.path)
         if '?' not in self.path:
 
-            ( resource, id) = parsed
+            (resource, id) = parsed
 
             if resource == "posts":
                 if id is not None:
@@ -96,20 +86,20 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods',
-                        'GET, POST, PUT, DELETE')
+                         'GET, POST, PUT, DELETE')
         self.send_header('Access-Control-Allow-Headers',
-                        'X-Requested-With, Content-Type, Accept')
+                         'X-Requested-With, Content-Type, Accept')
         self.end_headers()
 
     def do_POST(self):
         """Make a post request to the server"""
-        
+
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)
         response = None
         parsed = self.parse_url(self.path)
-        ( resource, id) = parsed
+        (resource, id) = parsed
 
         if resource == 'login':
             response = login_user(post_body)
@@ -137,7 +127,6 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handles PUT requests to the server"""
         pass
 
-
     def do_DELETE(self):
 
         # Parse the URL
@@ -146,8 +135,8 @@ class HandleRequests(BaseHTTPRequestHandler):
         success = False
 
         if resource == "posts":
-                delete_post(id)
-                success = True
+            delete_post(id)
+            success = True
 
         if success:
             self._set_headers(204)
@@ -156,7 +145,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             error_message = ""
 
             self.wfile.write(json.dumps(error_message).encode())
-
 
 
 def main():
