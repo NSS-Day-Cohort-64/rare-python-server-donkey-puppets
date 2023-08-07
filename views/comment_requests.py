@@ -17,7 +17,6 @@ def get_comments_by_post_id(id):
             u.bio,
             u.username,
             u.password,
-            u.profile_image_url,
             u.created_on,
             u.active,
             p.id as post_pk,
@@ -42,7 +41,7 @@ def get_comments_by_post_id(id):
             comments.append(comment.__dict__)
             user = User(
                 row['user_pk'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'],
-                row['password'], row['profile_image_url'], row['created_on'], row['active'],
+                row['password'], row['created_on'], row['active'],
             )
             post = Post(
                 row['post_pk'], row['post_user_id'], row['category_id'], row['title'], row['publication_date'], row['image_url'],
