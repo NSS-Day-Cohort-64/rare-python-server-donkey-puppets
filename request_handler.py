@@ -1,13 +1,13 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import urlparse
 import json
+from urllib.parse import urlparse, parse_qs
 from views import (
     get_all_tags, get_single_tag,
     create_tag, create_post,
     create_user, login_user,
     get_all_categories, get_single_category,
     get_all_posts, create_category, get_post_by_id, get_all_users,
-    get_user_by_id, delete_post, create_subscription
+    get_user_by_id, delete_post, get_comments_by_post_id, create_comment, create_subscription
 )
 
 
@@ -15,58 +15,58 @@ class HandleRequests(BaseHTTPRequestHandler):
     """Handles the requests to this server"""
 
     def parse_url(self, path):
-        url_components = urlparse(path)
-        path_params = url_components.path.strip("/").split("/")
-        query_params = []
 
-        if url_components.query != '':
-            query_params = url_components.query.split("&")
+        parsed_url = urlparse(path)
+        path_params = parsed_url.path.split('/')  # ['', 'animals', 1]
+        resource = path_params[1]
 
-        resource = path_params[0]
-        id = None
+        if parsed_url.query:
+            query = parse_qs(parsed_url.query)
+            return (resource, query)
 
+        pk = None
         try:
-            id = int(path_params[1])
-        except IndexError:
-            pass  # No route parameter exists: /animals
-        except ValueError:
-            pass  # Request had trailing slash: /animals/
-
-        return (resource, id, query_params)
+            pk = int(path_params[2])
+        except (IndexError, ValueError):
+            pass
+        return (resource, pk)
 
     def do_GET(self):
-        response = ""
+        response = None
         parsed = self.parse_url(self.path)
-        (resource, id, query_params) = parsed
+        if '?' not in self.path:
 
-        if resource == "posts":
-            if id is not None:
-                response = get_post_by_id(id)
-                self._set_headers(200)
+            (resource, id) = parsed
+
+            if resource == "posts":
+                if id is not None:
+                    response = get_post_by_id(id)
+                else:
+                    response = get_all_posts()
+            elif resource == "users":
+                if id is not None:
+                    response = get_user_by_id(id)
+                else:
+                    response = get_all_users()
+            elif resource == "categories":
+                if id is not None:
+                    response = get_single_category(id)
+                else:
+                    response = get_all_categories()
+            elif resource == "tags":
+                if id is not None:
+                    response = get_single_tag(id)
+                else:
+                    response = get_all_tags()
+            elif resource == "comments":
+                if id is not None:
+                    response = get_comments_by_post_id(id)
             else:
-                response = get_all_posts()
-                self._set_headers(200)
-        elif resource == "users":
-            if id is not None:
-                response = get_user_by_id(id)
-                self._set_headers(200)
-            else:
-                response = get_all_users()
-                self._set_headers(200)
-        elif resource == "categories":
-            if id is not None:
-                response = get_single_category(id)
-                self._set_headers(200)
-            else:
-                response = get_all_categories()
-                self._set_headers(200)
-        elif resource == "tags":
-            if id is not None:
-                response = get_single_tag(id)
-                self._set_headers(200)
-            else:
-                response = get_all_tags()
-                self._set_headers(200)
+                self._set_headers(404)
+        if response is not None:
+            self._set_headers(200)
+        else:
+            self._set_headers(204)
         self.wfile.write(json.dumps(response).encode())
 
     def _set_headers(self, status):
@@ -94,13 +94,15 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """Make a post request to the server"""
+
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         post_body = json.loads(post_body)
         response = None
 
         parsed = self.parse_url(self.path)
-        (resource, id, query_params) = parsed
+        (resource, id) = parsed
+
         if resource == 'login':
             response = login_user(post_body)
         elif resource == 'register':
@@ -111,6 +113,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_tag(post_body)
         elif resource == 'categories':
             response = create_category(post_body)
+        elif resource == 'comments':
+            response = create_comment(post_body)
         elif resource == 'subscriptions':
             response = create_subscription(post_body)
         if response is not None:
@@ -130,7 +134,7 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_DELETE(self):
 
         # Parse the URL
-        (resource, id, query_params) = self.parse_url(self.path)
+        (resource, id) = self.parse_url(self.path)
 
         success = False
 
